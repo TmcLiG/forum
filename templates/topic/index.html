@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{user.username}}</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .user_head {
+            display: inline-block;
+            height: 50px;
+            width: 100px;
+        }
+        .user_head:after{
+            content:'';
+            width:0;
+            height:100%;
+            display:inline-block;
+            vertical-align:middle;
+        }
+        .sssss {
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .input_active {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="navbar">
+    <div class="navbar-inner">
+         <div class="container">
+              <a class="brand" href="{{ url_for('gua_topic.index') }}">
+                  <!--<img src="/static/css/cnodejs_light.svg">-->
+              </a>
+
+              <form id="search_form" class="navbar-search" action="">
+                   <input type="text" id="q" name="q" class="search-query span3" value="">
+              </form>
+              <ul class="nav pull-right">
+                   <li><a href="{{ url_for('gua_topic.index') }}">首页</a></li>
+                   <li><a href="">未读消息</a></li>
+                   <li><a href="{{ url_for('mail.index') }}">邮箱</a></li>
+                   <li><a href="{{ url_for('index.user_set', id=user.id) }}">设置</a></li>
+                   <li><a href="" data-method="post" rel="nofollow">退出</a></li>
+              </ul>
+              <a class="btn btn-navbar" id="responsive-sidebar-trigger">
+                   <span class="icon-bar"></span>
+                   <span class="icon-bar"></span>
+                   <span class="icon-bar"></span>
+              </a>
+         </div>
+     </div>
+</div>
+    <div id="main">
+        <div id="sidebar">
+            <div class="panel">
+                <div class="header">
+                     <span class="col_fade">个人信息</span>
+                </div>
+                <div class="inner">
+                     <div class="user_card">
+                         <div>
+                             <div class="user_head">
+                                 <div class="sssss">
+                                     <a class="user_avatar"  href="{{ url_for('index.profile') }}">
+                                         <img src="{{ user.image }}" title="{{user.username}}">
+                                     </a>
+                                 </div>
+                                 <div class="sssss">
+                                     <span class="user_name"><a class="dark" href="{{ url_for('index.profile') }}">{{user.username}}</a></span>
+                                 </div>
+                             </div>
+                             <div class="board clearfix">
+                                 <button class="button_t">上传头像</button>
+                                 <form class="input_active ss" method="post" action="{{ url_for('index.avatar_add')}}" enctype="multipart/form-data">
+                                     <input type="file" name="avatar">
+                                     <button class="button_tt" type="submit">上传头像</button>
+                                 </form>
+                             </div>
+                             <div class="space clearfix">
+                             </div>
+                             <span class="signature">{{user.autograph}}</span>
+                         </div>
+                     </div>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="inner">
+                    <a href="{{ url_for('gua_topic.new') }}" class="create_topic_btn">
+                        <span class="span-success">发布话题</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div id="content">
+            <div class="panel">
+                <div class="inner post">
+                    <div class="topic_list">
+                        {% for t in ms %}
+                        <div class="cell">
+                            <div class="topic_title_wrapper">
+                                <a class="topic_title" href="{{ url_for('gua_topic.detail', id=t.id) }}">
+                                    {{ t.title }}
+                                </a>
+                                <span>{{ t.replies() | count }} / {{ t.views }}</span>
+                                <a class="topic_title" href="{{ url_for('gua_topic.delete', id=t.id, token=token) }}">
+                                     删除
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        var e = function(selector) {
+            return document.querySelector(selector)
+        }
+        var t = function() {
+            var s = e('.button_t')
+            s.addEventListener('click', function(event){
+                var self = e('.ss')
+                self.classList.toggle('input_active')
+                s.classList.toggle('input_active')
+            })
+            var n = e('.button_tt')
+            n.addEventListener('click', function(event){
+                var self = e('.ss')
+                self.classList.toggle('input_active')
+            })
+        }
+        var __main = function() {
+            t()
+        }
+        __main()
+    </script>
+</body>
+<!--<script src="/static/js/test.js"></script>-->
+</html>

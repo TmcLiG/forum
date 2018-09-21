@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="/static/css/index.min.23a5b1ca.min.css">
+    <title>{{user.username}} 的个人主页</title>
+</head>
+<body>
+<div class="navbar">
+    <div class="navbar-inner">
+         <div class="container">
+              <a class="brand" href="{{ url_for('gua_topic.index') }}">
+                  <!--<img src="/static/css/cnodejs_light.svg">-->
+              </a>
+
+              <form id="search_form" class="navbar-search" action="">
+                   <input type="text" id="q" name="q" class="search-query span3" value="">
+              </form>
+              <ul class="nav pull-right">
+                   <li><a href="{{ url_for('gua_topic.index') }}">首页</a></li>
+                   <li><a href="">未读消息</a></li>
+                   <li><a href="{{ url_for('mail.index') }}">邮箱</a></li>
+                   <li><a href="{{ url_for('index.user_set', id=user.id) }}">设置</a></li>
+                   <li><a href="" data-method="post" rel="nofollow">退出</a></li>
+              </ul>
+              <a class="btn btn-navbar" id="responsive-sidebar-trigger">
+                   <span class="icon-bar"></span>
+                   <span class="icon-bar"></span>
+                   <span class="icon-bar"></span>
+              </a>
+         </div>
+     </div>
+</div>
+    <div id="main">
+         <div id="content">
+              <div class="panel">
+                   <div class="header">
+                        <ul class="breadcrumb">
+                             <li><a href="{{ url_for('gua_topic.index') }}">主页</a><span class="divider">/</span></li>
+                        </ul>
+                   </div>
+                   <div class="inner userinfo">
+                        <div class="user_big_avatar">
+                             <img src="{{user.image}}" class="user_avatar">
+                        </div>
+                        <a class="dark" href="{{ url_for('index.profile') }}">{{user.username}}</a>
+                        <br/>
+                        <br/>
+                        <div>
+                             <p class="col_fade" data-created_time="{{ user.created_time }}"></p>
+                        </div>
+                   </div>
+              </div>
+
+              <div class="panel">
+                   <div class="header">
+                        <span class="col_fade">最近创建的话题</span>
+                   </div>
+                   {% for t in topic %}
+                   <div class="cell">
+
+                        <a class="user_avatar pull-left">
+                            <img src="{{user.image}}">
+                        </a>
+
+                        <span class="reply_count pull-left">
+                            <span class="count_of_replies" title="回复数">{{t.replies() | count }}</span>
+                            <span class="count_seperator">/</span>
+                            <span class="count_of_visits" title="点击数">{{t.views}}</span>
+                        </span>
+
+                        <span class="last_time pull-right">
+                             <img class="user_small_avatar" src="{{user.image}}">
+                            <span class="last_active_time" data-created_time="{{ t.created_time }}"></span>
+                        </span>
+
+                        <div class="topic_title_wrapper">
+                            <a class="topic_title" href="{{ url_for('gua_topic.detail', id=t.id) }}">
+                                 {{t.title}}
+                            </a>
+                        </div>
+
+                   </div>
+                   {% endfor %}
+              </div>
+
+              <div class="panel">
+                   <div class="header">
+                        <span class="col_fade">最近参与的话题</span>
+                   </div>
+                   {% for r in reply %}
+                   <div class="cell">
+
+                        <a class="user_avatar pull-left">
+                             <img src="{{user.image}}">
+                        </a>
+
+                        <span class="reply_count pull-left">
+                             <span class="count_of_replies" title="回复数">{{r.find_topic().replies() | count}}</span>
+                             <span class="count_seperator">/</span>
+                             <span class="count_of_visits" title="点击数">{{r.find_topic().views}}</span>
+                        </span>
+
+
+                        <a class="last_time pull-right" href="">
+                             <img class="user_small_avatar" src="{{user.image}}">
+                             <span class="last_active_time last_active_timer" data-created_time="{{ r.created_time }}"></span>
+                         </a>
+
+                        <div class="topic_title_wrapper">
+
+                             <span class="put_top">置顶</span>
+                             <a class="topic_title" href="{{ url_for('gua_topic.detail', id=r.find_topic().id) }}">
+                                 {{r.find_topic().title}}
+                             </a>
+                        </div>
+                    </div>
+                   {% endfor %}
+              </div>
+
+         </div>
+    </div>
+    <script>
+        var e = function (sel) {
+            return document.querySelector(sel)
+        }
+
+        var es = function (sel) {
+            return document.querySelectorAll(sel)
+        }
+
+        var registerTimer = function () {
+            var t = e('.col_fade')
+            var time = Number(t.dataset.created_time)
+            var now = Math.floor(new Date() / 1000)
+            var delta = Math.floor((now - time) / 3600)
+            var s = `注册时间 ${delta} 小时前`
+            t.innerText = s
+        }
+        var startTimer = function() {
+            var ts = es('.last_active_time')
+            for (var i = 0; i < ts.length; i++) {
+                 var t = ts[i]
+                 var time = Number(t.dataset.created_time)
+                 var now = Math.floor(new Date() / 1000)
+                 var delta = Math.floor((now - time) / 3600)
+                 var s = `${delta} 小时前`
+                 t.innerText = s
+            }
+        }
+
+        var statTime = function() {
+            var ts = es('.last_active_timer')
+            for (var i = 0; i < ts.length; i++) {
+                 var t = ts[i]
+                 var time = Number(t.dataset.created_time)
+                 var now = Math.floor(new Date() / 1000)
+                 var delta = Math.floor((now - time) / 3600)
+                 var s = `${delta} 小时前`
+                 t.innerText = s
+            }
+        }
+
+        var __main = function () {
+            registerTimer()
+            startTimer()
+            statTime()
+        }
+
+        __main()
+
+    </script>
+</body></html>
